@@ -19,7 +19,7 @@ history = open('HISTORY.rst').read().replace('.. :changelog:', '')
 
 setup(
     name='flask-musers',
-    version='0.0.1',
+    version='0.0.2',
     description='Flask app for store user in MongoDB and simple views for login, logout and registration.',
     long_description=readme + '\n\n' + history,
     author='Jindřich Smitka',

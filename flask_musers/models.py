@@ -1,20 +1,19 @@
 # -*- coding: utf-8 -*-
 
+from mongoengine import Document, EmailField, StringField, BooleanField, queryset_manager
+
 from passlib.hash import pbkdf2_sha256
 from passlib.utils import consteq
 
-# XXX: Need a app.py file with db variable set to mongoengine :(
-from app import db
 
+class User(Document):
+    email = EmailField(required=True, unique=True)
+    _password = StringField()
+    first_name = StringField()
+    last_name = StringField()
+    activated = BooleanField(default=False)
 
-class User(db.Document):
-    email = db.EmailField(required=True, unique=True)
-    _password = db.StringField()
-    first_name = db.StringField()
-    last_name = db.StringField()
-    activated = db.BooleanField(default=False)
-
-    @db.queryset_manager
+    @queryset_manager
     def active(doc_cls, queryset):
         return queryset.filter(activated=True)
 
