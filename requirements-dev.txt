@@ -1,0 +1,18 @@
+-r requirements.txt
+
+coverage
+pep8
+pylint
+flake8
+pyflakes
+mccabe
+splinter
+ipython
+# selenium
+# factory_boy
+pytest
+pytest-cov
+# pytest-splinter
+tox
+coveralls
+mock
