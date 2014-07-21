@@ -1,0 +1,12 @@
+[run]
+branch = true
+
+[report]
+omit =
+    *site-packages*
+    *tests*
+    *.tox*
+    *conftest*
+    *virtuals*
+    *migrations*
+show_missing = True
