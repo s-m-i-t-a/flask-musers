@@ -20,7 +20,8 @@ history = open('HISTORY.rst').read().replace('.. :changelog:', '')
 setup(
     name='flask-musers',
     version='0.0.2',
-    description='Flask app for store user in MongoDB and simple views for login, logout and registration.',
+    description='Flask app for store user in MongoDB'
+                ' and simple views for login, logout and registration.',
     long_description=readme + '\n\n' + history,
     author='Jindřich Smitka',
     author_email='smitka.j@gmail.com',
@@ -38,7 +39,6 @@ setup(
         'passlib>=1.6.1',
         'flask-mongoengine>=0.7.0',
         'mongoengine',
-        'flask-cbv',
     ],
     license="BSD",
     zip_safe=False,
@@ -53,6 +53,6 @@ setup(
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4',
     ],
-    test_suite='tests',
 )
