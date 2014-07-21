@@ -24,24 +24,24 @@ clean-pyc:
 	find . -name '*~' -exec rm -f {} +
 
 lint:
-	flake8 flask-musers tests
+	flake8 flask_musers tests
 
 test:
-	python setup.py test
+	py.test
 
 test-all:
 	tox
 
 coverage:
-	coverage run --source flask-musers setup.py test
+	coverage run --source flask_musers runtests.py
 	coverage report -m
 	coverage html
 	open htmlcov/index.html
 
 docs:
-	rm -f docs/flask-musers.rst
+	rm -f docs/flask_musers.rst
 	rm -f docs/modules.rst
-	sphinx-apidoc -o docs/ flask-musers
+	sphinx-apidoc -o docs/ flask_musers
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html
 	open docs/_build/html/index.html
