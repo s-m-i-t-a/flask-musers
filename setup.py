@@ -4,6 +4,8 @@
 import os
 import sys
 
+import flask_musers
+
 
 try:
     from setuptools import setup
@@ -14,12 +16,14 @@ if sys.argv[-1] == 'publish':
     os.system('python setup.py sdist upload')
     sys.exit()
 
+version = flask_musers.__version__
+
 readme = open('README.rst').read()
 history = open('HISTORY.rst').read().replace('.. :changelog:', '')
 
 setup(
     name='flask-musers',
-    version='0.0.2',
+    version=version,
     description='Flask app for store user in MongoDB'
                 ' and simple views for login, logout and registration.',
     long_description=readme + '\n\n' + history,
@@ -38,7 +42,7 @@ setup(
         'Jinja2>=2.7',
         'passlib>=1.6.1',
         'flask-mongoengine>=0.7.0',
-        'mongoengine',
+        'mongoengine>=0.8.7',
     ],
     license="BSD",
     zip_safe=False,

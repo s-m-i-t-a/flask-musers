@@ -18,6 +18,9 @@ from flask.ext.login import LoginManager
 from .models import User
 
 
+__version__ = '0.0.3'
+
+
 login_manager = LoginManager()
 # login_manager.setup_app(app)
 
