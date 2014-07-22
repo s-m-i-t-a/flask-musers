@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from wtforms import Form, PasswordField, TextField, validators
+from flask_wtf import Form
+from wtforms import PasswordField, TextField, validators
 
 
 class RegisterForm(Form):

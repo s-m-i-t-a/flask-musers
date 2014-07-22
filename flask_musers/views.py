@@ -2,20 +2,36 @@
 
 from mongoengine.document import NotUniqueError
 
-from flask import flash, redirect, Blueprint
+from flask import flash, redirect, Blueprint, request, url_for, render_template
 
 from flask.ext.login import login_user, logout_user, login_required
 
 from .forms import RegisterForm, LoginForm
-from .models import User
 
 
 musers = Blueprint('musers', __name__)
 
 
-@musers.route('/register', endpoint='register', methods=['GET'])
+REGISTRATION_SUCCESS = 'Thank you, your registration is successfully done.'
+REGISTRATION_ERROR = 'Correct your registration data and please try again.'
+
+
+@musers.route('/register', endpoint='register', methods=['GET', 'POST'])
 def register():
-    return ''
+    form = RegisterForm(formdata=request.form)
+    if form.validate_on_submit():
+        try:
+            form.register_user()
+            flash(REGISTRATION_SUCCESS, 'success')
+            return redirect(url_for('musers.login'))
+        except NotUniqueError:
+            flash(REGISTRATION_ERROR, 'error')
+    return render_template('musers/register.html', form=form)
+
+
+@musers.route('/login', endpoint='login', methods=['GET'])
+def login():
+    pass
 
 
 # class RegisterView(FormView):
