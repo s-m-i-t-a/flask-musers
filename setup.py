@@ -43,6 +43,7 @@ setup(
         'passlib>=1.6.1',
         'flask-mongoengine>=0.7.0',
         'mongoengine>=0.8.7',
+        'blinker>=1.3',
     ],
     license="BSD",
     zip_safe=False,
