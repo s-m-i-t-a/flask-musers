@@ -21,6 +21,8 @@ def create_app():
         'HOST': 'localhost',
         'PORT': 27017,
         'DB': 'musers_test',
+        'USER': None,
+        'PASSWORD': None,
     }
     app.config['SECRET_KEY'] = 'secret'
 
