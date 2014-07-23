@@ -16,3 +16,6 @@ pytest-cov
 tox
 coveralls
 mock
+
+# docs
+mkdocs
