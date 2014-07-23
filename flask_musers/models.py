@@ -9,19 +9,21 @@ from passlib.utils import consteq
 class User(Document):
     email = EmailField(required=True, unique=True)
     _password = StringField()
-    first_name = StringField()
-    last_name = StringField()
+    name = StringField()
     activated = BooleanField(default=False)
 
     @queryset_manager
     def active(doc_cls, queryset):
         return queryset.filter(activated=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.email
 
-    def get_absolute_url(self):
-        pass
+    def __repr__(self):
+        return str(self)
+
+    # def get_absolute_url(self):
+    #     pass
 
     def set_password(self, password):
         self._password = pbkdf2_sha256.encrypt(password)
@@ -43,4 +45,15 @@ class User(Document):
         return True
 
     def get_id(self):
-        return unicode(self.pk) if self.pk else None
+        return str(self.pk) if self.pk else None
+
+    @classmethod
+    def register(cls, email, password, activated=False, name=''):
+        user = cls()
+        user.email = email
+        user.name = name
+        user.activated = activated
+        user.set_password(password)
+        user.save()
+
+        return user
