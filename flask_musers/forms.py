@@ -3,6 +3,8 @@
 from flask_wtf import Form
 from wtforms import PasswordField, TextField, validators
 
+from .models import User
+
 
 class RegisterForm(Form):
     email = TextField('Email', [validators.Required(), validators.Email(message='Enter a valid e-mail address.')])
@@ -10,8 +12,10 @@ class RegisterForm(Form):
                                               validators.Length(min=8, message='Password must be at least 8 characters long.'),
                                               validators.EqualTo('password_again', message='Passwords is not equal!')])
     password_again = PasswordField('Password again', [validators.Required()])
-    first_name = TextField('First name', [validators.Optional()])
-    last_name = TextField('Last name', [validators.Optional()])
+    name = TextField('Name', [validators.Optional()])
+
+    def register_user(self):
+        return User.register(email=self.email.data, password=self.password.data, activated=True, name=self.name.data)
 
 
 class LoginForm(Form):
