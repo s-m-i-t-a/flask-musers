@@ -13,8 +13,15 @@ from .models import UserError
 musers = Blueprint('musers', __name__)
 
 
-REGISTRATION_SUCCESS = 'Thank you, your registration is successfully done.'
-REGISTRATION_ERROR = 'Correct your registration data and please try again.'
+REGISTRATION_SUCCESS = {
+    'message': 'Thank you, your registration is successfully done.',
+    'category': 'success',
+}
+
+REGISTRATION_ERROR = {
+    'message': 'Correct your registration data and please try again.',
+    'category': 'error',
+}
 
 LOGIN_SUCCESS = {
     'message': 'Logged in successfully.',
@@ -38,10 +45,10 @@ def register():
     if form.validate_on_submit():
         try:
             form.register_user()
-            flash(REGISTRATION_SUCCESS, 'success')
+            flash(**REGISTRATION_SUCCESS)
             return redirect(url_for('musers.login'))
         except NotUniqueError:
-            flash(REGISTRATION_ERROR, 'error')
+            flash(**REGISTRATION_ERROR)
     return render_template('musers/register.html', form=form)
 
 

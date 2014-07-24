@@ -118,7 +118,7 @@ class TestRegisterView(object):
         )
 
         assert mock_flash.called
-        assert mock_flash.call_args == call(REGISTRATION_SUCCESS, 'success')
+        assert mock_flash.call_args == call(**REGISTRATION_SUCCESS)
 
     @patch('flask_musers.views.RegisterForm')
     @patch('flask_musers.views.flash')
@@ -133,4 +133,4 @@ class TestRegisterView(object):
         )
 
         assert mock_flash.called
-        assert mock_flash.call_args == call(REGISTRATION_ERROR, 'error')
+        assert mock_flash.call_args == call(**REGISTRATION_ERROR)
