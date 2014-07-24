@@ -26,6 +26,11 @@ LOGIN_ERROR = {
     'category': 'error',
 }
 
+LOGOUT_SUCCESS = {
+    'message': 'Logged out successfully.',
+    'category': 'success',
+}
+
 
 @musers.route('/register', endpoint='register', methods=['GET', 'POST'])
 def register():
@@ -54,6 +59,15 @@ def login():
             flash(**LOGIN_ERROR)
 
     return render_template('musers/login.html', form=form)
+
+
+@musers.route('/logout', endpoint='logout', methods=['GET'])
+@login_required
+def logout():
+    logout_user()
+    flash(**LOGOUT_SUCCESS)
+    return redirect('/')
+
 
 # class LogoutView(MethodView):
 #     redirect = '/login/'
