@@ -17,6 +17,15 @@ REGISTER_URL = '/register'
 
 
 class TestRegisterView(object):
+    @pytest.fixture
+    def data(self, request):
+        data = {
+            'email': 'franta@vonasek.cz',
+            'password': 'vonasek123',
+            'password_again': 'vonasek123',
+        }
+        return data
+
     def test_register_url_resolves_to_register_view(self, app):
         urls = app.url_map.bind('localhost').match(REGISTER_URL)
         view = urls[0]
@@ -36,13 +45,7 @@ class TestRegisterView(object):
 
     @patch('flask_musers.views.RegisterForm')
     @patch('flask_musers.views.request')
-    def test_pass_POST_data_to_form(self, mock_request, MockRegisterForm, client):
-        data = {
-            'email': 'franta@vonasek.cz',
-            'password': 'vonasek123',
-            'password_again': 'vonasek123',
-        }
-
+    def test_pass_POST_data_to_form(self, mock_request, MockRegisterForm, client, data):
         client.post(
             REGISTER_URL,
             data=data
@@ -51,15 +54,9 @@ class TestRegisterView(object):
         assert MockRegisterForm.call_args == call(formdata=mock_request.form)
 
     @patch('flask_musers.views.RegisterForm')
-    def test_register_user_when_form_is_valid(self, MockRegisterForm, client):
+    def test_register_user_when_form_is_valid(self, MockRegisterForm, client, data):
         mock_form = MockRegisterForm.return_value
         mock_form.validate_on_submit.return_value = True
-
-        data = {
-            'email': 'franta@vonasek.cz',
-            'password': 'vonasek123',
-            'password_again': 'vonasek123',
-        }
 
         client.post(
             REGISTER_URL,
@@ -69,15 +66,9 @@ class TestRegisterView(object):
         assert mock_form.register_user.called
 
     @patch('flask_musers.views.RegisterForm')
-    def test_not_register_user_when_form_is_invalid(self, MockRegisterForm, client):
+    def test_not_register_user_when_form_is_invalid(self, MockRegisterForm, client, data):
         mock_form = MockRegisterForm.return_value
         mock_form.validate_on_submit.return_value = False
-
-        data = {
-            'email': 'franta@vonasek.cz',
-            'password': 'vonasek123',
-            'password_again': 'vonasek123',
-        }
 
         client.post(
             REGISTER_URL,
@@ -87,15 +78,9 @@ class TestRegisterView(object):
         assert not mock_form.register_user.called
 
     @patch('flask_musers.views.RegisterForm')
-    def test_redirect_to_login_when_form_is_valid(self, MockRegisterForm, client):
+    def test_redirect_to_login_when_form_is_valid(self, MockRegisterForm, client, data):
         mock_form = MockRegisterForm.return_value
         mock_form.validate_on_submit.return_value = True
-
-        data = {
-            'email': 'franta@vonasek.cz',
-            'password': 'vonasek123',
-            'password_again': 'vonasek123',
-        }
 
         response = client.post(
             REGISTER_URL,
@@ -107,16 +92,10 @@ class TestRegisterView(object):
 
     @patch('flask_musers.views.RegisterForm')
     @patch('flask_musers.views.render_template')
-    def test_render_template_when_form_is_invalid(self, mock_render_template, MockRegisterForm, client):
+    def test_render_template_when_form_is_invalid(self, mock_render_template, MockRegisterForm, client, data):
         mock_form = MockRegisterForm.return_value
         mock_form.validate_on_submit.return_value = False
         mock_render_template.return_value = six.b('')
-
-        data = {
-            'email': 'franta@vonasek.cz',
-            'password': 'vonasek123',
-            'password_again': 'vonasek123',
-        }
 
         response = client.post(
             REGISTER_URL,
@@ -129,15 +108,9 @@ class TestRegisterView(object):
 
     @patch('flask_musers.views.RegisterForm')
     @patch('flask_musers.views.flash')
-    def test_flash_message_if_registration_is_successfull(self, mock_flash, MockRegisterForm, client):
+    def test_flash_message_if_registration_is_successfull(self, mock_flash, MockRegisterForm, client, data):
         mock_form = MockRegisterForm.return_value
         mock_form.validate_on_submit.return_value = True
-
-        data = {
-            'email': 'franta@vonasek.cz',
-            'password': 'vonasek123',
-            'password_again': 'vonasek123',
-        }
 
         client.post(
             REGISTER_URL,
@@ -149,16 +122,10 @@ class TestRegisterView(object):
 
     @patch('flask_musers.views.RegisterForm')
     @patch('flask_musers.views.flash')
-    def test_flash_message_if_registration_failed(self, mock_flash, MockRegisterForm, client):
+    def test_flash_message_if_registration_failed(self, mock_flash, MockRegisterForm, client, data):
         mock_form = MockRegisterForm.return_value
         mock_form.validate_on_submit.return_value = True
         mock_form.register_user.side_effect = NotUniqueError
-
-        data = {
-            'email': 'franta@vonasek.cz',
-            'password': 'vonasek123',
-            'password_again': 'vonasek123',
-        }
 
         client.post(
             REGISTER_URL,
