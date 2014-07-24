@@ -22,13 +22,13 @@ Install flask-musers::
 
     pip install flask-musers
 
-In the app you must init the ``LoginManager``::
+In the app you must init the ``MUsers``::
 
     from flask import Flask
-    from flask_musers import login_manager
+    from flask.ext.musers import MUsers
 
     app = Flask(__name__)
-    login_manager.init_app(app)
+    MUsers(app)
 
 and register ``flask-musers`` blueprint::
 

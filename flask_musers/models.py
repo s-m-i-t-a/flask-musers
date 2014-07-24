@@ -71,3 +71,11 @@ class User(Document):
         except cls.DoesNotExist:
             raise UserError()
         return user
+
+    @classmethod
+    def get_active_user_by_pk_or_none(cls, userid):
+        try:
+            user = cls.active.get(pk=userid)
+        except cls.DoesNotExist:
+            user = None
+        return user

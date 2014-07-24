@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
 
 '''
-In the app you must init the *LoginManager*.
-
 from flask import Flask
-from flask_musers import login_manager
+from flask.ext.musers import MUsers
 
 app = Flask(__name__)
-login_manager.init_app(app)
+MUsers(app)
 .
 .
 .
@@ -21,15 +19,20 @@ from .models import User
 __version__ = '0.0.3'
 
 
-login_manager = LoginManager()
-# login_manager.setup_app(app)
+class MUsers(object):
+    def __init__(self, app=None):
+        self.login_manager = LoginManager()
+        self.login_manager.user_loader(self.load_user)
 
+        if app is not None:
+            self.init_app(app)
 
-@login_manager.user_loader
-def load_user(userid):
-    try:
-        user = User.active.get(pk=userid)
-    except User.DoesNotExist:
-        user = None
+    def init_app(self, app):
+        self.login_manager.init_app(app)
 
-    return user
+        app.extensions = getattr(app, 'extensions', {})
+        app.extensions['musers'] = self
+        self.app = app
+
+    def load_user(self, userid):
+        return User.get_active_user_by_pk_or_none(userid)

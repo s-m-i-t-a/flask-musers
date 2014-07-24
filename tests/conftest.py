@@ -28,8 +28,8 @@ def create_app():
 
     database.init_app(app)
 
-    from flask_musers import login_manager
-    login_manager.init_app(app)
+    from flask.ext.musers import MUsers
+    MUsers(app)
 
     # register blueprints
     from flask_musers.views import musers

@@ -6,6 +6,8 @@ if six.PY3:
 else:
     from mock import patch, call
 
+from bson.objectid import ObjectId
+
 from flask_musers.models import User, UserError
 
 
@@ -131,3 +133,33 @@ class TestUserModel(object):
         u = User.get_user(email=email, password=password)
 
         assert ur.pk == u.pk
+
+    @pytest.mark.usefixtures("db")
+    def test_get_active_user_by_pk_or_none_return_active_user(self):
+        email = 'jozin@zbazin.cz'
+        password = 'nevimvim_)12123'
+
+        ur = User.register(email=email, password=password, activated=True)
+
+        u = User.get_active_user_by_pk_or_none(str(ur.pk))
+
+        assert isinstance(u, User)
+        assert u.pk == ur.pk
+
+    @pytest.mark.usefixtures("db")
+    def test_get_active_user_by_pk_or_none_return_none_when_user_is_inactive(self):
+        email = 'jozin@zbazin.cz'
+        password = 'nevimvim_)12123'
+
+        ur = User.register(email=email, password=password, activated=False)
+
+        u = User.get_active_user_by_pk_or_none(str(ur.pk))
+
+        assert u is None
+
+    @pytest.mark.usefixtures("db")
+    def test_get_active_user_by_pk_or_none_return_none_when_user_dont_exists(self):
+        oid = ObjectId()
+        u = User.get_active_user_by_pk_or_none(str(oid))
+
+        assert u is None
