@@ -67,13 +67,3 @@ def logout():
     logout_user()
     flash(**LOGOUT_SUCCESS)
     return redirect('/')
-
-
-# class LogoutView(MethodView):
-#     redirect = '/login/'
-#     decorators = [login_required]
-
-#     def get(self, *args, **kwargs):
-#         logout_user()
-#         flash("Logged out successfully.", 'success')
-#         return redirect(self.redirect)
