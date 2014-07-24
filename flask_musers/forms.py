@@ -21,3 +21,6 @@ class RegisterForm(Form):
 class LoginForm(Form):
     email = TextField('Email', [validators.Required(), validators.Email()])
     password = PasswordField('Password', [validators.Required()])
+
+    def get_user(self):
+        return User.get_user(email=self.email.data, password=self.password.data)
