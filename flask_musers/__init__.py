@@ -12,15 +12,15 @@ MUsers(app)
 '''
 
 
+from flask.ext.login import LoginManager
 from .models import User
 
 
-__version__ = '0.0.6'
+__version__ = '0.0.7'
 
 
 class MUsers(object):
     def __init__(self, app=None):
-        from flask.ext.login import LoginManager
         self.login_manager = LoginManager()
         self.login_manager.user_loader(self.load_user)
 

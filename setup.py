@@ -4,9 +4,6 @@
 import os
 import sys
 
-import flask_musers
-
-
 try:
     from setuptools import setup
 except ImportError:
@@ -16,14 +13,17 @@ if sys.argv[-1] == 'publish':
     os.system('python setup.py sdist upload')
     sys.exit()
 
-version = flask_musers.__version__
+module_path = os.path.join(os.path.dirname(__file__), 'flask_musers', '__init__.py')
+version_line = [line for line in open(module_path)
+                if line.startswith('__version__')][0]
+__version__ = eval(version_line.split('__version__ = ')[-1])
 
 readme = open('README.rst').read()
 history = open('HISTORY.rst').read().replace('.. :changelog:', '')
 
 setup(
     name='flask-musers',
-    version=version,
+    version=__version__,
     description='Flask app for store user in MongoDB'
                 ' and simple views for login, logout and registration.',
     long_description=readme + '\n\n' + history,
