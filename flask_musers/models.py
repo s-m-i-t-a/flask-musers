@@ -6,6 +6,10 @@ from passlib.hash import pbkdf2_sha256
 from passlib.utils import consteq
 
 
+class UserError(Exception):
+    pass
+
+
 class User(Document):
     email = EmailField(required=True, unique=True)
     _password = StringField()
