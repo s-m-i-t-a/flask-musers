@@ -15,7 +15,7 @@ MUsers(app)
 from .models import User
 
 
-__version__ = '0.0.5'
+__version__ = '0.0.6'
 
 
 class MUsers(object):
