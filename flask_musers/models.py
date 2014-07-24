@@ -61,3 +61,13 @@ class User(Document):
         user.save()
 
         return user
+
+    @classmethod
+    def get_user(cls, email, password):
+        try:
+            user = cls.active.get(email=email)
+            if not user.check_password(password):
+                raise UserError()
+        except cls.DoesNotExist:
+            raise UserError()
+        return user

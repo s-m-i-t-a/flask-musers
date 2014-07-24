@@ -6,7 +6,7 @@ if six.PY3:
 else:
     from mock import patch, call
 
-from flask_musers.models import User
+from flask_musers.models import User, UserError
 
 
 class TestUserModel(object):
@@ -92,3 +92,42 @@ class TestUserModel(object):
 
         assert str(u) == email
         assert repr(u) == email
+
+    @pytest.mark.usefixtures("db")
+    def test_get_user_return_only_active_user(self):
+        email = 'jozin@zbazin.cz'
+        password = 'nevimvim_)12123'
+
+        User.register(email=email, password=password, activated=False)
+
+        with pytest.raises(UserError):
+            User.get_user(email=email, password=password)
+
+    def test_get_user_raise_error_when_user_not_found(self):
+        # raise UserError when user not found
+        email = 'jozin@zbazin.cz'
+        password = 'nevimvim_)12123'
+
+        with pytest.raises(UserError):
+            User.get_user(email=email, password=password)
+
+    @pytest.mark.usefixtures("db")
+    def test_get_user_raise_error_when_password_is_wrong(self):
+        # raise UserError when user not found
+        email = 'jozin@zbazin.cz'
+        password = 'nevimvim_)12123'
+        User.register(email=email, password=password, activated=True)
+
+        with pytest.raises(UserError):
+            User.get_user(email=email, password='asdasd')
+
+    @pytest.mark.usefixtures("db")
+    def test_get_user_return_user(self):
+        email = 'jozin@zbazin.cz'
+        password = 'nevimvim_)12123'
+
+        ur = User.register(email=email, password=password, activated=True)
+
+        u = User.get_user(email=email, password=password)
+
+        assert ur.pk == u.pk
