@@ -29,7 +29,7 @@ setup(
     long_description=readme + '\n\n' + history,
     author='Jindřich Smitka',
     author_email='smitka.j@gmail.com',
-    url='https://bitbucket.org/jsmitka/flask-musers',
+    url='https://github.com/s-m-i-t-a/flask-musers',
     packages=[
         'flask_musers',
     ],

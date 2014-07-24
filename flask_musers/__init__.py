@@ -16,7 +16,7 @@ from flask.ext.login import LoginManager
 from .models import User
 
 
-__version__ = '0.0.3'
+__version__ = '0.0.4'
 
 
 class MUsers(object):
