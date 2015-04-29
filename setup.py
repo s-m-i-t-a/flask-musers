@@ -46,6 +46,7 @@ setup(
         'passlib>=1.6.1',
         'blinker>=1.3',
         'six>=1.7.3',
+        'pymongo<3.0',
     ],
     license="BSD",
     zip_safe=False,
