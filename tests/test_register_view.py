@@ -134,3 +134,18 @@ class TestRegisterView(object):
 
         assert mock_flash.called
         assert mock_flash.call_args == call(**REGISTRATION_ERROR)
+
+    @pytest.mark.not_allowed_registration
+    def test_not_allowed_registration(
+        self,
+        app,
+        client,
+        data
+    ):
+
+        response = client.post(
+            REGISTER_URL,
+            data=data
+        )
+
+        assert response.status_code == httplib.FORBIDDEN

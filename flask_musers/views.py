@@ -2,7 +2,16 @@
 
 from mongoengine.document import NotUniqueError
 
-from flask import flash, redirect, Blueprint, request, url_for, render_template
+from flask import (
+    flash,
+    redirect,
+    Blueprint,
+    request,
+    url_for,
+    render_template,
+    current_app as app,
+    abort
+)
 
 from flask.ext.login import login_user, logout_user, login_required
 
@@ -41,6 +50,9 @@ LOGOUT_SUCCESS = {
 
 @musers.route('/register', endpoint='register', methods=['GET', 'POST'])
 def register():
+    if not app.config.get('MUSERS_ALLOW_REGISTRATIONS', True):
+        abort(403)
+
     form = RegisterForm(formdata=request.form)
     if form.validate_on_submit():
         try:
