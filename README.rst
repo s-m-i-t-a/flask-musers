@@ -45,3 +45,9 @@ Views has names ``musers.register``, ``musers.login`` and ``musers.logout``. The
     url_for('musers.register')
     url_for('musers.login')
     url_for('musers.logout')
+
+
+Config
+------
+
+* ``MUSERS_ALLOW_REGISTRATIONS`` - set to ``False``, when you want disable registrations. Default: ``True``
