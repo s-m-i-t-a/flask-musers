@@ -4,6 +4,8 @@ import six
 
 import pytest
 
+from itertools import chain
+
 from flask import Flask
 from flask.ext.mongoengine import MongoEngine
 from mongoengine import signals
@@ -12,19 +14,33 @@ from mongoengine import signals
 database = MongoEngine()
 
 
-def create_app():
+def config():
+    return {
+        'TESTING': True,
+        'MONGODB_SETTINGS': {
+            'HOST': 'localhost',
+            'PORT': 27017,
+            'DB': 'musers_test',
+            'USER': None,
+            'PASSWORD': None,
+        },
+        'SECRET_KEY': 'secret',
+    }
+
+
+def not_allowed_registration_config(config):
+    nar_config = {
+        'MUSERS_ALLOW_REGISTRATIONS': False,
+    }
+    return {key: value for (key, value) in chain(config.items(), nar_config.items())}
+
+
+def create_app(config):
     app = Flask(__name__)
 
     # config
-    app.config['TESTING'] = True
-    app.config['MONGODB_SETTINGS'] = {
-        'HOST': 'localhost',
-        'PORT': 27017,
-        'DB': 'musers_test',
-        'USER': None,
-        'PASSWORD': None,
-    }
-    app.config['SECRET_KEY'] = 'secret'
+    for key, value in config.items():
+        app.config[key] = value
 
     database.init_app(app)
 
@@ -65,9 +81,17 @@ class Db(object):
                 dtb.drop_collection(name)
 
 
+def pytest_generate_tests(metafunc):
+    if hasattr(metafunc.function, 'not_allowed_registration'):
+        metafunc.parametrize('app', ['not_allowed_registration'], indirect=True)
+
+
 @pytest.fixture
 def app(request):
-    app = create_app()
+    if getattr(request, 'param', '') == 'not_allowed_registration':
+        app = create_app(not_allowed_registration_config(config()))
+    else:
+        app = create_app(config())
 
     # Establish an application context before running the tests.
     ctx = app.app_context()
