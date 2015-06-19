@@ -59,7 +59,8 @@ class User(Document):
 
     @is_allowed
     def change_email(self, mail):
-        pass
+        self.email = mail
+        self.save()
 
     def is_active(self):
         return self.activated
