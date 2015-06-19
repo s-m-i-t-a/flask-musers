@@ -23,7 +23,8 @@ def is_allowed(func):
 
     """
     @wraps(func)
-    def _is_allowed(user, *args, password=None, **kwargs):
+    def _is_allowed(user, *args, **kwargs):
+        password = kwargs.pop('password', None)
         if user.check_password(password):
             return func(user, *args, **kwargs)
         else:
