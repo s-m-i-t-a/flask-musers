@@ -42,10 +42,10 @@ class User(Document):
         return False
 
     def is_authenticated(self):
-        #if not hasattr(self, '_authenticated'):
-            #self._authenticated = False
+        # if not hasattr(self, '_authenticated'):
+            # self._authenticated = False
 
-        #return self._authenticated
+        # return self._authenticated
         return True
 
     def get_id(self):
