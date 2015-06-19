@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from functools import wraps
+
 from mongoengine import Document, EmailField, StringField, BooleanField, queryset_manager
 
 from passlib.hash import pbkdf2_sha256
@@ -8,6 +10,26 @@ from passlib.utils import consteq
 
 class UserError(Exception):
     pass
+
+
+class NotAllowedError(UserError):
+    pass
+
+
+def is_allowed(func):
+    """Check user password, when is correct, then run decorated function.
+
+    :returns: decorated function
+
+    """
+    @wraps(func)
+    def _is_allowed(user, *args, password=None, **kwargs):
+        if user.check_password(password):
+            return func(user, *args, **kwargs)
+        else:
+            raise NotAllowedError()
+
+    return _is_allowed
 
 
 class User(Document):
@@ -34,6 +56,10 @@ class User(Document):
 
     def check_password(self, password):
         return pbkdf2_sha256.verify(password, self._password)
+
+    @is_allowed
+    def change_email(self, mail):
+        pass
 
     def is_active(self):
         return self.activated

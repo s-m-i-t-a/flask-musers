@@ -8,7 +8,7 @@ else:
 
 from bson.objectid import ObjectId
 
-from flask_musers.models import User, UserError
+from flask_musers.models import User, UserError, is_allowed, NotAllowedError
 
 
 class TestUserModel(object):
@@ -163,3 +163,48 @@ class TestUserModel(object):
         u = User.get_active_user_by_pk_or_none(str(oid))
 
         assert u is None
+
+    @pytest.mark.usefixtures("db")
+    def test_change_email(self):
+        email = 'jozin@zbazin.cz'
+        new_email = 'new@mail.com'
+        password = 'nevimvim_)12123'
+
+        user = User.register(email=email, password=password, activated=True)
+        assert user.email == email
+
+        user.change_email(new_email, password=password)
+
+        user = User.get_active_user_by_pk_or_none(str(user.pk))
+        assert user.email == new_email
+
+
+class TestIsAllowedDecorator(object):
+    @pytest.mark.usefixtures("db")
+    def test_allow_call_function(self):
+        email = 'jozin@zbazin.cz'
+        password = 'nevimvim_)12123'
+
+        @is_allowed
+        def f(self):
+            return self.get_id()
+
+        User.f = f
+        user = User.register(email=email, password=password, activated=True)
+
+        assert user.f(password=password) == user.get_id()
+
+    @pytest.mark.usefixtures("db")
+    def test_call_not_allowed(self):
+        email = 'jozin@zbazin.cz'
+        password = 'nevimvim_)12123'
+
+        @is_allowed
+        def f(self):
+            return self.get_id()
+
+        User.f = f
+        user = User.register(email=email, password=password, activated=True)
+
+        with pytest.raises(NotAllowedError):
+            user.f(password='bad password')
