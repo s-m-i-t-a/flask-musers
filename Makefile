@@ -5,13 +5,13 @@ help:
 	@echo "clean-pyc - remove Python file artifacts"
 	@echo "lint - check style with flake8"
 	@echo "test - run tests quickly with the default Python"
-	@echo "testall - run tests on every Python version with tox"
+	@echo "test-all - run tests on every Python version with tox"
 	@echo "coverage - check code coverage quickly with the default Python"
 	@echo "docs - generate Sphinx HTML documentation, including API docs"
 	@echo "release - package and upload a release"
 	@echo "sdist - package"
 
-clean: clean-build clean-pyc
+clean: clean-test clean-build clean-pyc
 
 clean-build:
 	rm -fr build/
@@ -23,13 +23,18 @@ clean-pyc:
 	find . -name '*.pyo' -exec rm -f {} +
 	find . -name '*~' -exec rm -f {} +
 
+clean-test:
+	rm -fr .tox/
+	rm -f .coverage
+	rm -fr htmlcov/
+
 lint:
 	flake8 flask_musers tests
 
 test:
 	py.test
 
-test-all:
+test-all: clean
 	tox
 
 coverage:
