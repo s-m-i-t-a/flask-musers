@@ -3,6 +3,7 @@
 import funcsigs as inspect
 
 from functools import wraps
+from blinker import signal
 
 from mongoengine import Document, EmailField, StringField, BooleanField, queryset_manager
 
@@ -71,6 +72,9 @@ class User(Document):
     def change_email(self, mail):
         self.email = mail
         self.save()
+
+        changed = signal('musers-email-changed')
+        changed.send(self)
 
     def is_active(self):
         return self.activated

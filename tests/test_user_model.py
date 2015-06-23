@@ -6,6 +6,7 @@ if six.PY3:
 else:
     from mock import patch, call
 
+from blinker import signal
 from bson.objectid import ObjectId
 
 from flask_musers.models import User, UserError, is_allowed, NotAllowedError
@@ -177,6 +178,25 @@ class TestUserModel(object):
 
         user = User.get_active_user_by_pk_or_none(str(user.pk))
         assert user.email == new_email
+
+    @pytest.mark.usefixtures("db")
+    def test_emit_signal_after_email_change(self):
+        email = 'jozin@zbazin.cz'
+        new_email = 'new@mail.com'
+        password = 'nevimvim_)12123'
+
+        user = User.register(email=email, password=password, activated=True)
+
+        changed = signal('musers-email-changed')
+
+        @changed.connect
+        def catch_signal(user):
+            catch_signal._called = True
+            assert user.email == new_email
+        catch_signal._called = False
+
+        user.change_email(new_email, password=password)
+        assert catch_signal._called, "Signal has not been captured"
 
 
 class TestIsAllowedDecorator(object):
