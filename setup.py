@@ -47,6 +47,7 @@ setup(
         'blinker>=1.3',
         'six>=1.7.3',
         'pymongo<3.0',
+        'funcsigs==0.4',
     ],
     license="BSD",
     zip_safe=False,

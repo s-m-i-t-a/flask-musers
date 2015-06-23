@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import funcsigs as inspect
+
 from functools import wraps
 
 from mongoengine import Document, EmailField, StringField, BooleanField, queryset_manager
@@ -28,6 +30,14 @@ def is_allowed(func):
             return func(user, *args, **kwargs)
         else:
             raise NotAllowedError()
+
+    # add password parameter to function signature
+    sig = inspect.signature(func)
+    parms = list(sig.parameters.values())
+    parms.append(inspect.Parameter('password',
+                                   inspect.Parameter.KEYWORD_ONLY,
+                                   default=None))
+    _is_allowed.__signature__ = sig.replace(parameters=parms)
 
     return _is_allowed
 
