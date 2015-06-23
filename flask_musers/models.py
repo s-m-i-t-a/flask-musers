@@ -5,7 +5,6 @@ from functools import wraps
 from mongoengine import Document, EmailField, StringField, BooleanField, queryset_manager
 
 from passlib.hash import pbkdf2_sha256
-from passlib.utils import consteq
 
 
 class UserError(Exception):
