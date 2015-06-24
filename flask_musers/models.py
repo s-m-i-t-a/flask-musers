@@ -70,11 +70,13 @@ class User(Document):
 
     @is_allowed
     def change_email(self, mail):
+        old = self.email
+
         self.email = mail
         self.save()
 
         changed = signal('musers-email-changed')
-        changed.send(self)
+        changed.send(self, data={'new': mail, 'old': old})
 
     def is_active(self):
         return self.activated

@@ -190,9 +190,30 @@ class TestUserModel(object):
         changed = signal('musers-email-changed')
 
         @changed.connect
-        def catch_signal(user):
+        def catch_signal(user, data):
             catch_signal._called = True
             assert user.email == new_email
+        catch_signal._called = False
+
+        user.change_email(new_email, password=password)
+        assert catch_signal._called, "Signal has not been captured"
+
+    @pytest.mark.usefixtures("db")
+    def test_change_email_signal_contains_new_and_old_email(self):
+        email = 'jozin@zbazin.cz'
+        new_email = 'new@mail.com'
+        password = 'nevimvim_)12123'
+
+        user = User.register(email=email, password=password, activated=True)
+
+        changed = signal('musers-email-changed')
+
+        @changed.connect
+        def catch_signal(user, data):
+            catch_signal._called = True
+            assert user.email == new_email
+            assert data['new'] == new_email
+            assert data['old'] == email
         catch_signal._called = False
 
         user.change_email(new_email, password=password)
