@@ -2,9 +2,9 @@ import six
 import pytest
 
 if six.PY3:
-    from unittest.mock import patch, call
+    from unittest.mock import patch, call, MagicMock
 else:
-    from mock import patch, call
+    from mock import patch, call, MagicMock
 
 from blinker import signal
 from bson.objectid import ObjectId
@@ -231,6 +231,22 @@ class TestUserModel(object):
 
         user = User.get_active_user_by_pk_or_none(str(user.pk))
         assert user.check_password(new_password)
+
+    @pytest.mark.usefixtures("db")
+    def test_emit_signal_after_password_change(self):
+        email = 'jozin@zbazin.cz'
+        password = 'nevimvim_)12123'
+        new_password = 'new_passW0rD'
+
+        user = User.register(email=email, password=password, activated=True)
+        changed = signal('musers-password-changed')
+
+        catch = MagicMock('catch_signal')
+        changed.connect(catch)
+
+        user.change_password(new_password, password=password)
+        assert catch.called, "Signal has not been captured"
+        assert catch.call_args == call(user)
 
 
 class TestIsAllowedDecorator(object):

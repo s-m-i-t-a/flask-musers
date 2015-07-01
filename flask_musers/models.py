@@ -73,6 +73,9 @@ class User(Document):
         self.set_password(new_password)
         self.save()
 
+        changed = signal('musers-password-changed')
+        changed.send(self)
+
     @is_allowed
     def change_email(self, mail):
         old = self.email
