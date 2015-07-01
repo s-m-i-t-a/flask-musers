@@ -69,6 +69,11 @@ class User(Document):
         return pbkdf2_sha256.verify(password, self._password)
 
     @is_allowed
+    def change_password(self, new_password):
+        self.set_password(new_password)
+        self.save()
+
+    @is_allowed
     def change_email(self, mail):
         old = self.email
 

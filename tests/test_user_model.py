@@ -219,6 +219,19 @@ class TestUserModel(object):
         user.change_email(new_email, password=password)
         assert catch_signal._called, "Signal has not been captured"
 
+    @pytest.mark.usefixtures("db")
+    def test_change_password(self):
+        email = 'jozin@zbazin.cz'
+        password = 'nevimvim_)12123'
+        new_password = 'new_passW0rD'
+
+        user = User.register(email=email, password=password, activated=True)
+
+        user.change_password(new_password, password=password)
+
+        user = User.get_active_user_by_pk_or_none(str(user.pk))
+        assert user.check_password(new_password)
+
 
 class TestIsAllowedDecorator(object):
     @pytest.mark.usefixtures("db")
