@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from blinker import signal
+from flask import current_app as app
+from itsdangerous import URLSafeTimedSerializer
 
 from flask_musers.models import User
 
@@ -12,10 +14,14 @@ def prepare_reset_password_for(email):
     reset_password.send(
         user,
         data={
-            'token': create_token_for(user, expires=3600),
+            'token': create_token_for(user),
         }
     )
 
 
-def create_token_for(user, expires):
-    pass
+def create_token_for(user):
+    signer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+
+    return signer.dumps({
+        'email': user.email,
+    })

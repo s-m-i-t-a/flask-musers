@@ -20,7 +20,7 @@ def mock_create_token():
         yield mock_create_token
 
 
-def test_find_user_by_email(mock_get_by_email):
+def test_find_user_by_email(mock_get_by_email, mock_create_token):
     prepare_reset_password_for('jozin@zbazin.com')
 
     assert mock_get_by_email.called
@@ -31,7 +31,7 @@ def test_create_token_for_found_user(mock_get_by_email, mock_create_token):
     prepare_reset_password_for('jozin@zbazin.com')
 
     assert mock_create_token.called
-    assert mock_create_token.call_args == call(mock_get_by_email.return_value, expires=3600)
+    assert mock_create_token.call_args == call(mock_get_by_email.return_value)
 
 
 def test_send_signal_with_user_and_token(mock_get_by_email, mock_create_token):
