@@ -41,6 +41,7 @@ setup(
         'WTForms>=1.0.4',
         'Jinja2>=2.7',
         'passlib>=1.6.1',
+        'itsdangerous>=0.24',
         'flask-mongoengine>=0.7.0',
         'mongoengine>=0.8.7',
         'passlib>=1.6.1',
