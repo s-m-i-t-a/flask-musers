@@ -18,6 +18,10 @@ class NotAllowedError(UserError):
     pass
 
 
+class EmailNotFound(UserError):
+    pass
+
+
 def is_allowed(func):
     """Check user password, when is correct, then run decorated function.
 
@@ -130,3 +134,10 @@ class User(Document):
         except cls.DoesNotExist:
             user = None
         return user
+
+    @classmethod
+    def get_by_email(cls, email):
+        try:
+            return cls.active.get(email=email)
+        except cls.DoesNotExist:
+            raise EmailNotFound()

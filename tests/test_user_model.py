@@ -9,7 +9,7 @@ else:
 from blinker import signal
 from bson.objectid import ObjectId
 
-from flask_musers.models import User, UserError, is_allowed, NotAllowedError
+from flask_musers.models import User, UserError, is_allowed, NotAllowedError, EmailNotFound
 
 
 class TestUserModel(object):
@@ -247,6 +247,24 @@ class TestUserModel(object):
         user.change_password(new_password, password=password)
         assert catch.called, "Signal has not been captured"
         assert catch.call_args == call(user)
+
+    @pytest.mark.usefixtures("db")
+    def test_find_by_email_return_user_when_found(self):
+        email = 'jozin@zbazin.cz'
+        password = 'nevimvim_)12123'
+
+        user = User.register(email=email, password=password, activated=True)
+
+        u = User.get_by_email(email)
+
+        assert u.pk == user.pk
+        assert u.email == user.email
+        assert u._password == user._password
+
+    @pytest.mark.usefixtures("db")
+    def test_raise_email_not_found(self):
+        with pytest.raises(EmailNotFound):
+            User.get_by_email('bad@email.com')
 
 
 class TestIsAllowedDecorator(object):
