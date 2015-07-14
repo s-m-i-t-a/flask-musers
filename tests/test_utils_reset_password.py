@@ -32,21 +32,33 @@ def mock_signer():
         yield signer
 
 
-def test_find_user_by_email(mock_get_by_email, mock_create_token):
+def test_find_user_by_email(
+    mock_get_by_email,
+    mock_create_token,
+    mock_signer
+):
     prepare_reset_password_for('jozin@zbazin.com')
 
     assert mock_get_by_email.called
     assert mock_get_by_email.call_args == call('jozin@zbazin.com')
 
 
-def test_create_token_for_found_user(mock_get_by_email, mock_create_token):
+def test_create_token_for_found_user(
+    mock_get_by_email,
+    mock_create_token,
+    mock_signer
+):
     prepare_reset_password_for('jozin@zbazin.com')
 
     assert mock_create_token.called
-    assert mock_create_token.call_args == call(mock_get_by_email.return_value)
+    assert mock_create_token.call_args == call(mock_get_by_email.return_value, mock_signer.return_value)
 
 
-def test_send_signal_with_user_and_token(mock_get_by_email, mock_create_token):
+def test_send_signal_with_user_and_token(
+    mock_get_by_email,
+    mock_create_token,
+    mock_signer
+):
     rp = signal('musers-reset-password-token-created')
 
     @rp.connect
@@ -71,7 +83,11 @@ def test_reset_password_get_email_from_token(
     assert mock_get_email_from_token.call_args == call('token', mock_signer.return_value)
 
 
-def test_reset_password_get_user(mock_get_email_from_token, mock_get_by_email):
+def test_reset_password_get_user(
+    mock_get_email_from_token,
+    mock_get_by_email,
+    mock_signer
+):
     reset_password('token', 'password')
 
     assert mock_get_by_email.called
@@ -81,6 +97,7 @@ def test_reset_password_get_user(mock_get_email_from_token, mock_get_by_email):
 def test_reset_password_set_new_password(
     mock_get_by_email,
     mock_get_email_from_token,
+    mock_signer
 ):
     reset_password('token', 'password')
 

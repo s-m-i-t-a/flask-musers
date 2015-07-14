@@ -13,7 +13,7 @@ def user(db):
 
 @pytest.fixture
 def token(user):
-    return create_token_for(user)
+    return create_token_for(user, _signer())
 
 
 def test_get_email_from_token_return_email(user, token):

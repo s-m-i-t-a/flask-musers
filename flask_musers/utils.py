@@ -14,14 +14,12 @@ def prepare_reset_password_for(email):
     reset_password.send(
         user,
         data={
-            'token': create_token_for(user),
+            'token': create_token_for(user, _signer()),
         }
     )
 
 
-def create_token_for(user):
-    signer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
-
+def create_token_for(user, signer):
     return signer.dumps({
         'email': user.email,
     })
