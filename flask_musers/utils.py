@@ -31,8 +31,8 @@ def reset_password(token, password):
     user.save()
 
 
-def get_email_from_token(token, signer):
-    return signer.loads(token)['email']
+def get_email_from_token(token, signer, max_age=3600):
+    return signer.loads(token, max_age=max_age)['email']
 
 
 def _signer():
