@@ -25,3 +25,16 @@ def create_token_for(user):
     return signer.dumps({
         'email': user.email,
     })
+
+
+def reset_password(token, password):
+    user = User.get_by_email(get_email_from_token(token, _signer()))
+    user.set_password(password)
+
+
+def get_email_from_token(token, signer):
+    return signer.loads(token)['email']
+
+
+def _signer():
+    return URLSafeTimedSerializer(app.config['SECRET_KEY'])
