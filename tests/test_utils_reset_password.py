@@ -105,3 +105,4 @@ def test_reset_password_set_new_password(
     assert mock_get_by_email.return_value.set_password.call_args == call(
         'password'
     )
+    assert mock_get_by_email.return_value.save.called

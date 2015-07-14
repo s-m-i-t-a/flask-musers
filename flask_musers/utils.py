@@ -28,6 +28,7 @@ def create_token_for(user, signer):
 def reset_password(token, password):
     user = User.get_by_email(get_email_from_token(token, _signer()))
     user.set_password(password)
+    user.save()
 
 
 def get_email_from_token(token, signer):
