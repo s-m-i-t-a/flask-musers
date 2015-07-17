@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 
+import re
+import string
+
 import funcsigs as inspect
 
 from functools import wraps
@@ -20,6 +23,42 @@ class NotAllowedError(UserError):
 
 class EmailNotFound(UserError):
     pass
+
+
+class InvalidPassword(UserError):
+    def __init__(self, message):
+        Exception.__init__(self, message)
+        self.message = message
+
+
+def validate_password(password):
+    def _lowercase(password):
+        if re.search(r'[a-z]', password):
+            return True
+        return False
+
+    def _uppercase(password):
+        if re.search(r'[A-Z]', password):
+            return True
+        return False
+
+    def _number(password):
+        if re.search(r'\d', password):
+            return True
+
+        return False
+
+    def _symbol(password):
+        return any(c in string.punctuation for c in password)
+
+    validators = (_lowercase, _uppercase, _number, _symbol)
+
+    if len(password) < 8:
+        raise InvalidPassword('The password must be at least 8 characters long')
+    elif not all(map(lambda f: f(password), validators)):
+        raise InvalidPassword('The password must contain at least one lowercase letter, one uppercase letter, number and symbol.')
+    else:
+        return password
 
 
 def is_allowed(func):
@@ -67,7 +106,7 @@ class User(Document):
     #     pass
 
     def set_password(self, password):
-        self._password = pbkdf2_sha256.encrypt(password)
+        self._password = pbkdf2_sha256.encrypt(validate_password(password))
 
     def check_password(self, password):
         return pbkdf2_sha256.verify(password, self._password)

@@ -16,7 +16,7 @@ class TestUserModel(object):
     @pytest.mark.usefixtures("db")
     def test_user_register(self):
         email = 'jozin@zbazin.cz'
-        password = 'nevimvim_)12123'
+        password = 'Nevimvim_)12123'
 
         User.register(email=email, password=password, activated=True)
 
@@ -29,7 +29,7 @@ class TestUserModel(object):
     @pytest.mark.usefixtures("db")
     def test_user_register_return_new_user_object(self):
         email = 'jozin@zbazin.cz'
-        password = 'nevimvim_)12123'
+        password = 'Nevimvim_)12123'
 
         u = User.register(email=email, password=password, activated=True)
 
@@ -39,7 +39,7 @@ class TestUserModel(object):
 
     @pytest.mark.usefixtures("db")
     def test_get_id_return_string_when_object_is_saved(self):
-        u = User.register(email='nevim@nevim.cz', password='jednadva3', activated=True)
+        u = User.register(email='nevim@nevim.cz', password='Jedna_dva_3', activated=True)
 
         uid = str(u.pk)
 
@@ -47,14 +47,14 @@ class TestUserModel(object):
 
     def test_get_id_return_none_when_is_unsaved(self):
         u = User(email='nevim@nevim.cz', activated=True)
-        u.set_password('jednadva3')
+        u.set_password('Jedna_dva_3')
 
         assert u.get_id() is None
 
     @pytest.mark.usefixtures("db")
     def test_active_queryset_returns_only_active_users(self):
         for i in range(20):
-            User.register(email='user%d@foo.cz' % i, password='passW%d' % i, activated=i % 2 == 0)
+            User.register(email='user%d@foo.cz' % i, password='pass]W_%d' % i, activated=i % 2 == 0)
 
         active_users = User.active.all()
 
@@ -63,7 +63,7 @@ class TestUserModel(object):
 
     @patch('flask_musers.models.pbkdf2_sha256.encrypt')
     def test_encrypt_user_password(self, mock_encrypt):
-        password = 'nevimvim_)12123'
+        password = 'Nevimvim_)12123'
         u = User()
         u.set_password(password)
 
@@ -73,6 +73,16 @@ class TestUserModel(object):
         assert mock_encrypt.call_args == kall
 
         assert u._password == mock_encrypt.return_value
+
+    @patch('flask_musers.models.pbkdf2_sha256.encrypt')
+    @patch('flask_musers.models.validate_password')
+    def test_validate_password(self, mock_validate, mock_encrypt):
+        password = 'Nevimvim_)12123'
+        u = User()
+        u.set_password(password)
+
+        assert mock_validate.called
+        assert mock_validate.call_args == call(password)
 
     def test_user_cant_be_anonymous(self):
         u = User()
@@ -99,7 +109,7 @@ class TestUserModel(object):
     @pytest.mark.usefixtures("db")
     def test_get_user_return_only_active_user(self):
         email = 'jozin@zbazin.cz'
-        password = 'nevimvim_)12123'
+        password = 'Nevimvim_)12123'
 
         User.register(email=email, password=password, activated=False)
 
@@ -109,7 +119,7 @@ class TestUserModel(object):
     def test_get_user_raise_error_when_user_not_found(self):
         # raise UserError when user not found
         email = 'jozin@zbazin.cz'
-        password = 'nevimvim_)12123'
+        password = 'Nevimvim_)12123'
 
         with pytest.raises(UserError):
             User.get_user(email=email, password=password)
@@ -118,7 +128,7 @@ class TestUserModel(object):
     def test_get_user_raise_error_when_password_is_wrong(self):
         # raise UserError when user not found
         email = 'jozin@zbazin.cz'
-        password = 'nevimvim_)12123'
+        password = 'Nevimvim_)12123'
         User.register(email=email, password=password, activated=True)
 
         with pytest.raises(UserError):
@@ -127,7 +137,7 @@ class TestUserModel(object):
     @pytest.mark.usefixtures("db")
     def test_get_user_return_user(self):
         email = 'jozin@zbazin.cz'
-        password = 'nevimvim_)12123'
+        password = 'Nevimvim_)12123'
 
         ur = User.register(email=email, password=password, activated=True)
 
@@ -138,7 +148,7 @@ class TestUserModel(object):
     @pytest.mark.usefixtures("db")
     def test_get_active_user_by_pk_or_none_return_active_user(self):
         email = 'jozin@zbazin.cz'
-        password = 'nevimvim_)12123'
+        password = 'Nevimvim_)12123'
 
         ur = User.register(email=email, password=password, activated=True)
 
@@ -150,7 +160,7 @@ class TestUserModel(object):
     @pytest.mark.usefixtures("db")
     def test_get_active_user_by_pk_or_none_return_none_when_user_is_inactive(self):
         email = 'jozin@zbazin.cz'
-        password = 'nevimvim_)12123'
+        password = 'Nevimvim_)12123'
 
         ur = User.register(email=email, password=password, activated=False)
 
@@ -169,7 +179,7 @@ class TestUserModel(object):
     def test_change_email(self):
         email = 'jozin@zbazin.cz'
         new_email = 'new@mail.com'
-        password = 'nevimvim_)12123'
+        password = 'Nevimvim_)12123'
 
         user = User.register(email=email, password=password, activated=True)
         assert user.email == email
@@ -183,7 +193,7 @@ class TestUserModel(object):
     def test_emit_signal_after_email_change(self):
         email = 'jozin@zbazin.cz'
         new_email = 'new@mail.com'
-        password = 'nevimvim_)12123'
+        password = 'Nevimvim_)12123'
 
         user = User.register(email=email, password=password, activated=True)
 
@@ -202,7 +212,7 @@ class TestUserModel(object):
     def test_change_email_signal_contains_new_and_old_email(self):
         email = 'jozin@zbazin.cz'
         new_email = 'new@mail.com'
-        password = 'nevimvim_)12123'
+        password = 'Nevimvim_)12123'
 
         user = User.register(email=email, password=password, activated=True)
 
@@ -222,7 +232,7 @@ class TestUserModel(object):
     @pytest.mark.usefixtures("db")
     def test_change_password(self):
         email = 'jozin@zbazin.cz'
-        password = 'nevimvim_)12123'
+        password = 'Nevimvim_)12123'
         new_password = 'new_passW0rD'
 
         user = User.register(email=email, password=password, activated=True)
@@ -235,7 +245,7 @@ class TestUserModel(object):
     @pytest.mark.usefixtures("db")
     def test_emit_signal_after_password_change(self):
         email = 'jozin@zbazin.cz'
-        password = 'nevimvim_)12123'
+        password = 'Nevimvim_)12123'
         new_password = 'new_passW0rD'
 
         user = User.register(email=email, password=password, activated=True)
@@ -251,7 +261,7 @@ class TestUserModel(object):
     @pytest.mark.usefixtures("db")
     def test_find_by_email_return_user_when_found(self):
         email = 'jozin@zbazin.cz'
-        password = 'nevimvim_)12123'
+        password = 'Nevimvim_)12123'
 
         user = User.register(email=email, password=password, activated=True)
 
@@ -271,7 +281,7 @@ class TestIsAllowedDecorator(object):
     @pytest.mark.usefixtures("db")
     def test_allow_call_function(self):
         email = 'jozin@zbazin.cz'
-        password = 'nevimvim_)12123'
+        password = 'Nevimvim_)12123'
 
         @is_allowed
         def f(self):
@@ -285,7 +295,7 @@ class TestIsAllowedDecorator(object):
     @pytest.mark.usefixtures("db")
     def test_call_not_allowed(self):
         email = 'jozin@zbazin.cz'
-        password = 'nevimvim_)12123'
+        password = 'Nevimvim_)12123'
 
         @is_allowed
         def f(self):
