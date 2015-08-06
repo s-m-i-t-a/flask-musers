@@ -21,7 +21,7 @@ def serializer(app):
 
 
 def test_token_contains_email(user, serializer):
-    token = create_token_for(user, _signer())
+    token = create_token_for(user, _signer)
 
     data = serializer.loads(token)
 
@@ -29,7 +29,7 @@ def test_token_contains_email(user, serializer):
 
 
 def test_token_expire(user, serializer):
-    token = create_token_for(user, _signer())
+    token = create_token_for(user, _signer)
 
     time.sleep(2)
 
