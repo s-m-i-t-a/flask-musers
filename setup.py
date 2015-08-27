@@ -50,6 +50,7 @@ setup(
         'pymongo<3.0',
         'funcsigs==0.4',
         'Werkzeug>=2.0.2',
+        'railroad==0.1.0',
     ],
     license="BSD",
     zip_safe=False,
