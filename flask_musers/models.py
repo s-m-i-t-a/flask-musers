@@ -1,16 +1,25 @@
 # -*- coding: utf-8 -*-
 
-import re
-import string
-
 import funcsigs as inspect
 
 from functools import wraps
 from blinker import signal
 
+from flask import current_app
 from mongoengine import Document, EmailField, StringField, BooleanField, queryset_manager
-
 from passlib.hash import pbkdf2_sha256
+from railroad import compose, prepare, catch, get_or_reraise
+from werkzeug.utils import import_string
+
+from .validators import (
+    has_lowercase,
+    has_uppercase,
+    has_number,
+    has_symbol,
+    min_length,
+    checker,
+    validator,
+)
 
 
 class UserError(Exception):
@@ -31,34 +40,39 @@ class InvalidPassword(UserError):
         self.message = message
 
 
+def _default_validator(*args, **kwargs):
+    return checker(
+        validator(has_lowercase, 'The password must contain at least one lowercase letter.'),
+        validator(has_uppercase, 'The password must contain at least one uppercase letter.'),
+        validator(has_number, 'The password must contain at least one number.'),
+        validator(has_symbol, 'The password must contain at least one symbol.'),
+        validator(min_length, 'The password must be at least 8 characters long.')
+    )
+
+
+def _create_password_validator(app):
+    return compose(
+        prepare(
+            compose(
+                lambda app: app.config.get('MUSERS_PASSWORD_VALIDATOR'),
+                import_string
+            )
+        ),
+        catch(ImportError, _default_validator),
+        catch(RuntimeError, _default_validator),
+        get_or_reraise
+    )(app)
+
+
 def validate_password(password):
-    def _lowercase(password):
-        if re.search(r'[a-z]', password):
-            return True
-        return False
+    validator = _create_password_validator(current_app)
 
-    def _uppercase(password):
-        if re.search(r'[A-Z]', password):
-            return True
-        return False
+    result = validator(password)
 
-    def _number(password):
-        if re.search(r'\d', password):
-            return True
+    if len(result) != 0:
+        raise InvalidPassword(' '.join(result))
 
-        return False
-
-    def _symbol(password):
-        return any(c in string.punctuation for c in password)
-
-    validators = (_lowercase, _uppercase, _number, _symbol)
-
-    if len(password) < 8:
-        raise InvalidPassword('The password must be at least 8 characters long')
-    elif not all(map(lambda f: f(password), validators)):
-        raise InvalidPassword('The password must contain at least one lowercase letter, one uppercase letter, number and symbol.')
-    else:
-        return password
+    return password
 
 
 def is_allowed(func):

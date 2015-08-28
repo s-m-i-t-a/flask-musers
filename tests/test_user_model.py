@@ -1,15 +1,22 @@
 import six
 import pytest
 
-if six.PY3:
-    from unittest.mock import patch, call, MagicMock
-else:
-    from mock import patch, call, MagicMock
+from mock import patch, call, MagicMock, Mock
 
 from blinker import signal
 from bson.objectid import ObjectId
 
-from flask_musers.models import User, UserError, is_allowed, NotAllowedError, EmailNotFound
+from flask_musers.models import (
+    User,
+    UserError,
+    is_allowed,
+    NotAllowedError,
+    EmailNotFound,
+    InvalidPassword,
+    validate_password
+)
+
+from tests import validator
 
 
 class TestUserModel(object):
@@ -45,6 +52,7 @@ class TestUserModel(object):
 
         assert uid == u.get_id()
 
+    @pytest.mark.usefixtures("app")
     def test_get_id_return_none_when_is_unsaved(self):
         u = User(email='nevim@nevim.cz', activated=True)
         u.set_password('Jedna_dva_3')
@@ -61,6 +69,7 @@ class TestUserModel(object):
         assert len(active_users) == 10
         assert all([u.activated for u in active_users])
 
+    @pytest.mark.usefixtures("app")
     @patch('flask_musers.models.pbkdf2_sha256.encrypt')
     def test_encrypt_user_password(self, mock_encrypt):
         password = 'Nevimvim_)12123'
@@ -306,3 +315,19 @@ class TestIsAllowedDecorator(object):
 
         with pytest.raises(NotAllowedError):
             user.f(password='bad password')
+
+
+class TestValidatePassword(object):
+    def test_use_custom_validator_and_raise_error(self, app):
+        app.config['MUSERS_PASSWORD_VALIDATOR'] = 'tests.bad_validator'
+        with pytest.raises(InvalidPassword) as excinfo:
+            validate_password('pass')
+
+            assert excinfo.value.message == 'Error'
+
+    def test_use_custom_validator(self, app):
+        app.config['MUSERS_PASSWORD_VALIDATOR'] = 'tests.validator'
+        validate_password('pass')
+
+        assert validator.called
+        assert validator.call_args == call('pass')

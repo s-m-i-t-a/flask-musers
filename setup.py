@@ -49,7 +49,7 @@ setup(
         'six>=1.7.3',
         'pymongo<3.0',
         'funcsigs==0.4',
-        'Werkzeug>=2.0.2',
+        'Werkzeug>=0.10.4',
         'railroad==0.1.0',
     ],
     license="BSD",

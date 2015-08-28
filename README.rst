@@ -51,3 +51,4 @@ Config
 ------
 
 * ``MUSERS_ALLOW_REGISTRATIONS`` - set to ``False``, when you want disable registrations. Default: ``True``
+* ``MUSERS_PASSWORD_VALIDATOR`` - used for custom validator. The dotted name for the object to import. Default: `None`

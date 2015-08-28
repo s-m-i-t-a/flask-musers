@@ -1,9 +1,6 @@
 import six
 
-if six.PY3:
-    from unittest.mock import patch, call
-else:
-    from mock import patch, call
+from mock import patch, call
 
 from flask import request
 

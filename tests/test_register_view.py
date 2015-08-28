@@ -3,10 +3,10 @@ import pytest
 
 if six.PY3:
     import http.client as httplib
-    from unittest.mock import patch, call
 else:
     import httplib
-    from mock import patch, call
+
+from mock import patch, call
 
 from mongoengine.document import NotUniqueError
 

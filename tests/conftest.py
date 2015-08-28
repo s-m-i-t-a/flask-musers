@@ -8,6 +8,7 @@ from itertools import chain
 
 from flask import Flask
 from flask.ext.mongoengine import MongoEngine
+from mock import Mock
 from mongoengine import signals
 
 
@@ -33,6 +34,13 @@ def not_allowed_registration_config(config):
         'MUSERS_ALLOW_REGISTRATIONS': False,
     }
     return {key: value for (key, value) in chain(config.items(), nar_config.items())}
+
+
+def custom_validator_config(config):
+    cfg = {
+        'MUSERS_PASSWORD_VALIDATOR': 'tests.validator'
+    }
+    return {key: value for (key, value) in chain(config.items(), cfg.items())}
 
 
 def create_app(config):
@@ -84,12 +92,16 @@ class Db(object):
 def pytest_generate_tests(metafunc):
     if hasattr(metafunc.function, 'not_allowed_registration'):
         metafunc.parametrize('app', ['not_allowed_registration'], indirect=True)
+    elif hasattr(metafunc.function, 'custom_validator'):
+        metafunc.parametrize('app', ['custom_validator'], indirect=True)
 
 
 @pytest.fixture
 def app(request):
     if getattr(request, 'param', '') == 'not_allowed_registration':
         app = create_app(not_allowed_registration_config(config()))
+    elif getattr(request, 'param', '') == 'custom_validator':
+        app = create_app(custom_validator_config(config()))
     else:
         app = create_app(config())
 

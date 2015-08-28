@@ -37,20 +37,3 @@ def reset_password(token, password):
 
 def get_email_from_token(token, signer=_signer, max_age=3600):
     return signer().loads(token, max_age=max_age)['email']
-
-
-def checker(*args):
-    def _checker(value):
-        return tuple(fn(value)[1] for fn in args if not fn(value)[0])
-
-    return _checker
-
-
-def validator(f, message):
-    def _validator(value):
-        if f(value):
-            return (True, '')
-        else:
-            return (False, message)
-
-    return _validator

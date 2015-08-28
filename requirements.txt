@@ -1,4 +1,5 @@
 Flask>=0.10.1
+Werkzeug>=0.10.4
 Flask-Login>=0.2.7
 WTForms>=1.0.4
 Jinja2>=2.7

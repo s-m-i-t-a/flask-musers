@@ -2,7 +2,7 @@
 
 from mock import Mock, call
 
-from flask_musers.utils import validator
+from flask_musers.validators import validator
 
 
 def test_return_validation_function():

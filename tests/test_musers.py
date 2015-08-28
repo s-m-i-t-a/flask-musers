@@ -1,10 +1,7 @@
 import six
 import pytest
 
-if six.PY3:
-    from unittest.mock import patch, call
-else:
-    from mock import patch, call
+from mock import patch, call
 
 from flask_musers import MUsers
 
