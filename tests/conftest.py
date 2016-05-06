@@ -26,6 +26,7 @@ def config():
             'PASSWORD': None,
         },
         'SECRET_KEY': 'secret',
+        'LOGIN_DISABLED': True,
     }
 
 
