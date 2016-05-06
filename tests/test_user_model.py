@@ -5,6 +5,7 @@ from mock import patch, call, MagicMock, Mock
 
 from blinker import signal
 from bson.objectid import ObjectId
+from mongoengine.errors import NotUniqueError
 
 from flask_musers.models import (
     User,
@@ -43,6 +44,15 @@ class TestUserModel(object):
         assert u.email == email
         assert u.check_password(password)
         assert u.activated
+
+    @pytest.mark.usefixtures("db")
+    def test_raise_error_when_user_register_again(self):
+        email = 'jozin@zbazin.cz'
+        password = 'Nevimvim_)12123'
+
+        User.register(email=email, password=password, activated=True)
+        with pytest.raises(NotUniqueError):
+            User.register(email=email, password=password, activated=True)
 
     @pytest.mark.usefixtures("db")
     def test_get_id_return_string_when_object_is_saved(self):
