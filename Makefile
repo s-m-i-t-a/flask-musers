@@ -35,7 +35,7 @@ test:
 	py.test
 
 test-all: clean
-	tox
+	tox --skip-missing-interpreters
 
 coverage:
 	coverage run --source flask_musers runtests.py
