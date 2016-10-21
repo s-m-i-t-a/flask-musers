@@ -5,7 +5,7 @@ import pytest
 from itertools import chain
 
 from flask import Flask
-from flask.ext.mongoengine import MongoEngine
+from flask_mongoengine import MongoEngine
 from mongoengine import signals
 
 
@@ -50,7 +50,7 @@ def create_app(config):
 
     database.init_app(app)
 
-    from flask.ext.musers import MUsers
+    from flask_musers import MUsers
     MUsers(app)
 
     # register blueprints
