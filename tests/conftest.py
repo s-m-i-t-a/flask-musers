@@ -1,14 +1,11 @@
 # -*- coding: utf-8 -*-
 
-import six
-
 import pytest
 
 from itertools import chain
 
 from flask import Flask
 from flask.ext.mongoengine import MongoEngine
-from mock import Mock
 from mongoengine import signals
 
 
@@ -110,12 +107,9 @@ def app(request):
     ctx = app.app_context()
     ctx.push()
 
-    def teardown():
-        ctx.pop()
+    yield app
 
-    request.addfinalizer(teardown)
-
-    return app
+    ctx.pop()
 
 
 @pytest.fixture
