@@ -43,7 +43,7 @@ setup(
         'passlib>=1.6.1',
         'itsdangerous>=0.24',
         'flask-mongoengine>=0.7.0',
-        'mongoengine>=0.8.7',
+        'mongoengine>=0.10',
         'passlib>=1.6.1',
         'blinker>=1.3',
         'six>=1.7.3',

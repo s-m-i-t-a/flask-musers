@@ -1,14 +1,11 @@
 # -*- coding: utf-8 -*-
 
-import six
-
 import pytest
 
 from itertools import chain
 
 from flask import Flask
 from flask.ext.mongoengine import MongoEngine
-from mock import Mock
 from mongoengine import signals
 
 
@@ -79,15 +76,15 @@ class Db(object):
         # smazeme vsechny vytvorene kolekce
         connection_name = self.application.config['MONGODB_SETTINGS']['DB']
         dtb = database.connection[connection_name]
+        dtb = dtb.database
         if (self.application.config['MONGODB_SETTINGS']['USER'] and
                 self.application.config['MONGODB_SETTINGS']['PASSWORD']):
             user = self.application.config['MONGODB_SETTINGS']['USER']
             password = self.application.config['MONGODB_SETTINGS']['PASSWORD']
             dtb.authenticate(user, password)
 
-        for name in dtb.collection_names():
-            if not name.startswith('system'):
-                dtb.drop_collection(name)
+        for name in dtb.collection_names(False):
+            dtb.drop_collection(name)
 
 
 def pytest_generate_tests(metafunc):
@@ -110,12 +107,9 @@ def app(request):
     ctx = app.app_context()
     ctx.push()
 
-    def teardown():
-        ctx.pop()
+    yield app
 
-    request.addfinalizer(teardown)
-
-    return app
+    ctx.pop()
 
 
 @pytest.fixture
@@ -124,9 +118,9 @@ def client(app):
 
 
 @pytest.fixture
-def db(request, app):
+def db(app):
     db = Db(application=app)
 
-    request.addfinalizer(db.clean)
+    yield db
 
-    return db
+    db.clean()
