@@ -10,7 +10,7 @@ splinter
 ipython
 # selenium
 # factory_boy
-pytest
+pytest>2.10
 pytest-cov
 # pytest-splinter
 tox
