@@ -2,7 +2,7 @@
 
 '''
 from flask import Flask
-from flask.ext.musers import MUsers
+from flask_musers import MUsers
 
 app = Flask(__name__)
 MUsers(app)
@@ -12,7 +12,7 @@ MUsers(app)
 '''
 
 
-from flask.ext.login import LoginManager
+from flask_login import LoginManager
 from .models import User
 
 
