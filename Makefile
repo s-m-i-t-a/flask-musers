@@ -38,9 +38,7 @@ test-all: clean
 	tox --skip-missing-interpreters
 
 coverage:
-	coverage run --source flask_musers runtests.py
-	coverage report -m
-	coverage html
+	py.test --cov=flask_musers --cov-report=html
 	open htmlcov/index.html
 
 docs:

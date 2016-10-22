@@ -16,6 +16,6 @@ services:
 install: pip install -r requirements-dev.txt
 
 # command to run tests, e.g. python setup.py test
-script: coverage run --source flask_musers runtests.py
+script: py.test --cov=flask_musers
 
 after_success: coveralls
